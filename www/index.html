@@ -29,7 +29,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" id="username">张三</a></li>
-            <li><button class="btn btn-danger btn-exit" id="logout" onclick="location.href='http://127.0.0.1:3000/logout'">退出</button></li>
+            <li><button class="btn btn-danger btn-exit" id="logout"
+                onclick="location.href='http://127.0.0.1:3000/logout'">退出</button></li>
             <li><button class="btn btn-success" id="login" onclick="location.href='./login.html'">请登录</button></li>
           </ul>
         </div>
@@ -94,6 +95,48 @@
       </div>
     </div>
   </div>
+  <script src="libs/template-web.js"></script>
+  <!-- 英雄列表模板 -->
+  <script id="hero_list" type="text/html">
+    {{each heros v}}
+    <tr>
+      <td> {{v.name}} </td>
+      <td> {{v.skill}} </td>
+      <td><img src="{{v.icon}}" width="72px" height="72px"></td>
+      <td class="manager">
+        <button class="btn btn-success" data-id="{{v.id}}" onclick="location.href='./update.html'">编辑🐷</button>
+        <button class="btn btn-danger" data-id="{{v.id}}">删除👍</button>
+      </td>
+    </tr>
+    {{/each}}
+  </script>
+  <script>
+    // 入口函数
+    $(function () {
+      // 1.查找按钮点击事件
+      $('#searchBtn').click(function (e) {
+        // 1.1 阻止默认跳转(表单中的按钮需要阻止默认跳转)
+        e.preventDefault();
+        // 1.2 获取输入框数据
+        // 1.3 ajax发送请求
+        $.ajax({
+          url: 'http://127.0.0.1:3000/hero/list',
+          type: 'get',
+          dataType: 'json',
+          data: {
+            search: $('#search').val()
+          },
+          success: function (backData) {
+            console.log(backData);
+            // 模板引擎渲染页面
+            $('#heroListBody').html(template('hero_list',backData));
+          }
+        });
+      });
+      // 2.页面一加载，默认请求所有数据
+      $('#searchBtn').click();
+    })
+  </script>
 </body>
 
 </html>

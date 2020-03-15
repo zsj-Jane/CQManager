@@ -37,7 +37,40 @@ let heroModel = hm.model('heros', {
 // 5.1 查询英雄列表
 app.get('/hero/list', (req, res) => {
     // (1) 请求
-    // (2) 处理
+    let {search} = req.query;
+    // (2) 处理(查询数据库)
+    if (!search) {
+        // 如果没有search，查询所有数据
+        heroModel.find((err,results)=>{
+            if (err) {
+                res.send({
+                    code:500,
+                    msg:'服务器错误'
+                }); 
+            } else {
+                res.send({
+                    code:200,
+                    heros:results
+                })
+            }
+        });
+    } else {
+        // 如果有search，则根据条件查询数据(包含查询)
+        // name="剑" ： 名字叫做剑    name like "%剑%" ： 名字包含剑
+        heroModel.find(`name like "%${search}%"`,(err,results)=>{
+            if (err) {
+                res.send({
+                    code:500,
+                    msg:'服务器错误'
+                }); 
+            } else {
+                res.send({
+                    code:200,
+                    heros:results
+                })
+            }
+        });
+    }
     // (3) 响应
 });
 // 5.2 查询英雄详情
