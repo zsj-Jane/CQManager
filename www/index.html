@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>英雄列表</title>
+  <!-- 导入jquery -->
+  <script src="./libs/jquery-1.12.4.min.js"></script>
+  <!-- 导入bootstrap -->
+  <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css">
+  <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+  <!-- 导入art-template -->
+  <script src="./libs/template-web.js"></script>
+</head>
+
+<body>
+  <!-- bootstrap的容器  带版心的-->
+  <div class="container">
+    <!-- 导航 -->
+    <nav class="navbar navbar-default">
+      <div class=".container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">欢迎进入CQ后台管理</a>
+        </div>
+        <!-- 用户登录信息 -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="username">张三</a></li>
+            <li><button class="btn btn-danger btn-exit" id="logout" onclick="location.href='http://127.0.0.1:3000/logout'">退出</button></li>
+            <li><button class="btn btn-success" id="login" onclick="location.href='./login.html'">请登录</button></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- 底部的内容 -->
+    <div class="row">
+      <!-- 栅格布局 -->
+      <div class=".col-md-9">
+        <div class="panel panel-default">
+          <!-- 标题 -->
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <!-- 面包屑导航 -->
+              <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li class="active">英雄列表</li>
+              </ol>
+            </h3>
+          </div>
+          <!-- 标题 -->
+          <div class="panel-heading">
+            <!-- 表单 -->
+            <form class="form-inline">
+              <div class="form-group">
+                <label class="sr-only" for="search">Amount (in dollars)</label>
+                <div class="input-group">
+                  <div class="input-group-addon">英雄姓名</div>
+                  <input type="text" class="form-control" id="search" placeholder="请输入查询内容" />
+                </div>
+              </div>
+              <button type="button" class="btn btn-success btn-search" id="searchBtn">查找</button>
+              <button type="button" class="btn btn-warning" onclick="location.href='./insert.html'">新增</button>
+            </form>
+          </div>
+          <!-- 内容 -->
+          <div class="panel-body" id="content">
+            <table class="table table-bordered">
+              <!-- 头部 -->
+              <thead>
+                <tr>
+                  <th>姓名</th>
+                  <th>技能</th>
+                  <th>头像</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <!-- 表格body -->
+              <tbody id="heroListBody">
+                <td> 提姆 </td>
+                <td> 顺风浪逆风投 </td>
+                <td><img src="./images/111.png" width="72px" height="72px"></td>
+                <td class="manager">
+                  <button class="btn btn-success" onclick="location.href='./update.html'">编辑🐷</button>
+                  <button class="btn btn-danger">删除👍</button>
+                </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
