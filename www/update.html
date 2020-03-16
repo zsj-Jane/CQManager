@@ -85,7 +85,32 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>  
+  </script>
+  <script>
+    // 入口函数
+    $(function(){
+      // 1.获取从index.html传递过来的id
+      let id = window.location.href.split('=')[1];
+      // 2.加载英雄详情
+      $.ajax({
+        url:'http://127.0.0.1:3000/hero/info',
+        type:'get',
+        dataType:'json',
+        data:{id},
+        success: function(backData){
+          console.log(backData);
+          // 渲染页面
+          $('#name').val(backData.data.name);
+          $('#skill').val(backData.data.skill);
+          $('#iconImg').attr('src',backData.data.icon);
+        }
+      });
+      // 3.文件预览
+
+      // 4.文件上传
+    })
+  </script>
 </body>
 
 </html>
