@@ -267,8 +267,42 @@ app.post('/user/register', (req, res) => {
 // 5.8 用户登录
 app.post('/user/login', (req, res) => {
     // (1) 请求
+    let { username, password } = req.body;
     // (2) 处理
-    // (3) 响应
+    // 200:注册成功  401：账号或密码错误  500：服务器内部错误
+    // a.检查账号是否正确
+    userModel.find(`username="${username}"`, (err, results) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        } else {
+            if (results.length == 0) {
+                // 表示账号错误
+                res.send({
+                    code: 401,
+                    msg: '账号或密码错误'//服务器不会告诉客户端真实原因，降低撞库攻击风险
+                });
+            } else {
+                // b.检查密码是否正确
+                // 检查数据库中数据和本次提交数据是否一致，results是一个数组，需要下标取值
+                if (password != results[0].password) {
+                    // 表示密码错误
+                    res.send({
+                        code: 401,
+                        msg: '账号或密码错误'
+                    });
+                } else {
+                    // (3) 响应
+                    res.send({
+                        code: 200,
+                        msg: '登录成功'
+                    });
+                }
+            }
+        }
+    });
 });
 // 5.9 退出登录
 app.get('/logout', (req, res) => {
