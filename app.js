@@ -32,7 +32,6 @@ let heroModel = hm.model('heros', {
     skill: String,
     icon: String,
 });
-
 // 5.路由(接口文档)
 // 5.1 查询英雄列表
 app.get('/hero/list', (req, res) => {
@@ -137,9 +136,9 @@ app.post('/hero/update', (req, res) => {
 // 5.4 删除英雄
 app.post('/hero/delete', (req, res) => {
     // (1) 请求
-    let {id} = req.body;
+    let { id } = req.body;
     // (2) 处理
-    heroModel.delete(`id=${id}`,(err,results)=>{
+    heroModel.delete(`id=${id}`, (err, results) => {
         if (err) {
             res.send({
                 code: 500,
@@ -162,8 +161,8 @@ app.post('/hero/add', (req, res) => {
     // b. 文件数据
     let { icon } = req.files;
     // (2) 处理
-     // a. 文件：写入服务器文件夹static中的images去 `${__dirname}/static/images/${name}.png`
-     icon.mv(`${__dirname}/static/images/${name}.png`, (err) => {
+    // a. 文件：写入服务器文件夹static中的images去 `${__dirname}/static/images/${name}.png`
+    icon.mv(`${__dirname}/static/images/${name}.png`, (err) => {
         if (err) {
             res.send({
                 code: 500,
@@ -192,11 +191,23 @@ app.post('/hero/add', (req, res) => {
         }
     });
 });
+// svg-captcha：验证码插件（因为不是每个地方都会用到，不需要像中间件那样要用app.use()）
+// (1)导入验证码模块
+var svgCaptcha = require('svg-captcha');
+// (2)声明全局变量存储验证码文本
+let captchaText = "";
 // 5.6 验证码
 app.get('/captcha', (req, res) => {
     // (1) 请求
+    // console.log(req.url);
     // (2) 处理
-    // (3) 响应
+    var captcha = svgCaptcha.create();
+    // console.log(captcha);
+    // 文本：服务器存起来用于注册接口验证
+    captchaText = captcha.text;
+    // 图片：响应给客户端
+    res.type('svg');
+    res.status(200).send(captcha.data);
 });
 // 5.7 用户注册
 app.post('/hero/register', (req, res) => {

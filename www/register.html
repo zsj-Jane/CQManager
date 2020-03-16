@@ -72,6 +72,22 @@
       </div>
     </div>
   </div>
+  <script>
+    // 入口函数
+    $(function () {
+      // 1.点击验证码图片刷新验证码
+      $('.code').click(function () {
+        /*
+          a.验证码不能使用ajax发送请求
+            原因：验证码服务器返回的不是字符串，而是图片二进制数据
+          b.验证码只需重设img标签的src属性即可
+          问题：img标签自带缓存功能，如果src一致，则只发一次请求
+          解决方案：添加随机参数
+        */
+        $('.code').attr('src', `http://127.0.0.1:3000/captcha?t=${Math.random() * 999}`);
+      });
+    })
+  </script>
 </body>
 
 </html>
