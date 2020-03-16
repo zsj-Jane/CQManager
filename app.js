@@ -157,8 +157,40 @@ app.post('/hero/delete', (req, res) => {
 // 5.5 新增英雄
 app.post('/hero/add', (req, res) => {
     // (1) 请求
+    // a. 文本数据
+    let { name, skill } = req.body;
+    // b. 文件数据
+    let { icon } = req.files;
     // (2) 处理
-    // (3) 响应
+     // a. 文件：写入服务器文件夹static中的images去 `${__dirname}/static/images/${name}.png`
+     icon.mv(`${__dirname}/static/images/${name}.png`, (err) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        }
+    })
+    // b. 文本：存入数据库 icon:`http://127.0.0.1:3000/images/${name}.png`
+    // 注意：托管了static文件夹，可以省略static，服务器会自动识别路径中托管的文件夹下的资源
+    heroModel.insert({
+        name,
+        skill,
+        icon: `http://127.0.0.1:3000/images/${name}.png`
+    }, (err, results) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        } else {
+            // (3) 响应
+            res.send({
+                code: 200,
+                msg: '新增成功'
+            });
+        }
+    });
 });
 // 5.6 验证码
 app.get('/captcha', (req, res) => {
