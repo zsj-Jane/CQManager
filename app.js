@@ -27,10 +27,16 @@ hm.connect({
     database: 'cqmanager'//数据库名称
 });
 // (3) 创建Model(表格模型：负责增删改查)
+// 英雄模型
 let heroModel = hm.model('heros', {
     name: String,
     skill: String,
     icon: String,
+});
+// 用户模型
+let userModel = hm.model('users', {
+    username: String,
+    password: String
 });
 // 5.路由(接口文档)
 // 5.1 查询英雄列表
@@ -210,13 +216,56 @@ app.get('/captcha', (req, res) => {
     res.status(200).send(captcha.data);
 });
 // 5.7 用户注册
-app.post('/hero/register', (req, res) => {
+app.post('/user/register', (req, res) => {
     // (1) 请求
+    let { username, password, code } = req.body;
     // (2) 处理
-    // (3) 响应
+    // 200:注册成功  401：验证码错误  402:用户已注册  500：服务器内部错误
+    // a.检验验证码是否正确(不区分大小写)
+    if (captchaText.toLocaleLowerCase() != code.toLocaleLowerCase()) {
+        res.send({
+            code: 401,
+            msg: "验证码错误"
+        });
+    } else {
+        // b.检验用户是否已注册(查询数据库是否有数据)
+        userModel.find(`username="${username}"`, (err, results) => {
+            if (err) {
+                res.send({
+                    code: 500,
+                    msg: '服务器错误'
+                });
+            } else {
+                if (results.length > 0) {
+                    // 表示用户已注册
+                    res.send({
+                        code: 402,
+                        msg: '用户已注册'
+                    });
+                } else {
+                    // 表示用户未注册
+                    // c.注册用户(添加数据库)
+                    userModel.insert({ username, password }, (err, results) => {
+                        if (err) {
+                            res.send({
+                                code: 500,
+                                msg: '服务器错误'
+                            });
+                        } else {
+                            // (3) 响应
+                            res.send({
+                                code: 200,
+                                msg: '注册成功'
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
 });
 // 5.8 用户登录
-app.post('/hero/login', (req, res) => {
+app.post('/user/login', (req, res) => {
     // (1) 请求
     // (2) 处理
     // (3) 响应
