@@ -105,7 +105,7 @@
       <td><img src="{{v.icon}}" width="72px" height="72px"></td>
       <td class="manager">
         <button class="btn btn-success" data-id="{{v.id}}" onclick="location.href='./update.html?id={{v.id}}'">编辑🐷</button>
-        <button class="btn btn-danger" data-id="{{v.id}}">删除👍</button>
+        <button class="btn btn-danger btn-del" data-id="{{v.id}}">删除👍</button>
       </td>
     </tr>
     {{/each}}
@@ -135,6 +135,24 @@
       });
       // 2.页面一加载，默认请求所有数据
       $('#searchBtn').click();
+      // 3.删除按钮的点击事件
+      // 注意点：删除按钮是动态添加的，需要添加委托事件
+      $('#heroListBody').on('click','.btn-del',function () {
+        $.ajax({
+          url:'http://127.0.0.1:3000/hero/delete',
+          type:'post',
+          dataType:'json',
+          data:{id:$(this).attr('data-id')},
+          success: function(backData){
+            console.log(backData);
+            if (backData.code==200) {
+              alert('删除成功');
+              // 刷新页面
+              window.location.reload();
+            }
+          }
+        });
+      })
     })
   </script>
 </body>
