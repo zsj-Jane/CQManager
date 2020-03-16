@@ -85,30 +85,69 @@
         </div>
       </div>
     </div>
-  </div>  
+  </div>
   </script>
   <script>
     // 入口函数
-    $(function(){
+    $(function () {
       // 1.获取从index.html传递过来的id
       let id = window.location.href.split('=')[1];
       // 2.加载英雄详情
       $.ajax({
-        url:'http://127.0.0.1:3000/hero/info',
-        type:'get',
-        dataType:'json',
-        data:{id},
-        success: function(backData){
+        url: 'http://127.0.0.1:3000/hero/info',
+        type: 'get',
+        dataType: 'json',
+        data: { id },
+        success: function (backData) {
           console.log(backData);
           // 渲染页面
           $('#name').val(backData.data.name);
           $('#skill').val(backData.data.skill);
-          $('#iconImg').attr('src',backData.data.icon);
+          $('#iconImg').attr('src', backData.data.icon);
+          // 给隐藏域id赋值
+          $('#id').val(id);
         }
       });
       // 3.文件预览
-
+      // 3.1 给file表单注册onchange事件
+      $('#icon').change(function () {
+        // 3.2 获取选择的文件(原生的方法)
+        let file = this.files[0];
+        // 3.3 生成文件的url
+        let url = URL.createObjectURL(file);
+        // 3.4 将url赋值给img的src
+        $('#iconImg').attr('src', url);
+      })
       // 4.文件上传
+      $('.btn-save').click(function (e) {
+        // 4.1 阻止表单的默认跳转
+        e.preventDefault();
+        // 4.2 创建formdata(原生的方法)
+        /*
+          注意点：接口文档参数>表单参数
+          解决方案：
+            1.使用input隐藏域
+            2.使用fd的append手动追加参数
+        */
+        let fd = new FormData($('#form')[0]);
+        // 4.3 ajax提交文件
+        $.ajax({
+          url: 'http://127.0.0.1:3000/hero/update',
+          type: 'post',
+          dataType: 'json',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function (backData) {
+            console.log(backData);
+            if (backData.code == 200) {
+              alert('编辑成功');
+              // 跳转首页
+              window.location.href = '/index.html';
+            }
+          }
+        });
+      })
     })
   </script>
 </body>
