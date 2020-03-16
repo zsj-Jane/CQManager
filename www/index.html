@@ -129,7 +129,25 @@
           success: function (backData) {
             console.log(backData);
             // 模板引擎渲染页面
-            $('#heroListBody').html(template('hero_list',backData));
+            $('#heroListBody').html(template('hero_list', backData));
+            // 根据用户是否登录来渲染页面
+            if (backData.user) {// 表示有登录过
+              // a标签的内容用text
+              $('#username').text(backData.user.username);
+              // 显示退出按钮
+              $('#logout').show();
+              // 隐藏登录按钮
+              $('#login').hide();
+              $('.manager').show();
+            } else {// 表示没有登录
+              // 隐藏用户名
+              $('#username').hide();
+              // 隐藏退出按钮
+              $('#logout').hide();
+              // 显示登录按钮
+              $('#login').show();
+              $('.manager').hide();
+            }
           }
         });
       });
@@ -137,15 +155,15 @@
       $('#searchBtn').click();
       // 3.删除按钮的点击事件
       // 注意点：删除按钮是动态添加的，需要添加委托事件
-      $('#heroListBody').on('click','.btn-del',function () {
+      $('#heroListBody').on('click', '.btn-del', function () {
         $.ajax({
-          url:'http://127.0.0.1:3000/hero/delete',
-          type:'post',
-          dataType:'json',
-          data:{id:$(this).attr('data-id')},
-          success: function(backData){
+          url: 'http://127.0.0.1:3000/hero/delete',
+          type: 'post',
+          dataType: 'json',
+          data: { id: $(this).attr('data-id') },
+          success: function (backData) {
             console.log(backData);
-            if (backData.code==200) {
+            if (backData.code == 200) {
               alert('删除成功');
               // 刷新页面
               window.location.reload();

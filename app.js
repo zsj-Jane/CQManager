@@ -38,9 +38,20 @@ let userModel = hm.model('users', {
     username: String,
     password: String
 });
+// 4.4 cookie-session中间件：给req添加session成员
+var cookieSession = require('cookie-session');
+app.use(cookieSession({
+    name: 'session',
+    keys: ['1','2'],//加密（盐）
+    // 有效期
+    maxAge: 7*24 * 60 * 60 * 1000 // 7*24 hours
+  }));
 // 5.路由(接口文档)
 // 5.1 查询英雄列表
 app.get('/hero/list', (req, res) => {
+    // 查看当前的cookie
+    console.log(req.session.user);
+    
     // (1) 请求
     let { search } = req.query;
     // (2) 处理(查询数据库)
@@ -56,7 +67,9 @@ app.get('/hero/list', (req, res) => {
                 // (3) 响应
                 res.send({
                     code: 200,
-                    heros: results
+                    heros: results,
+                    // 将服务器收到的cookie返回给客户端，告诉客户端该用户是否登录过
+                    user:req.session.user
                 })
             }
         });
@@ -73,7 +86,9 @@ app.get('/hero/list', (req, res) => {
                 // (3) 响应
                 res.send({
                     code: 200,
-                    heros: results
+                    heros: results,
+                     // 将服务器收到的cookie返回给客户端，告诉客户端该用户是否登录过
+                     user:req.session.user
                 })
             }
         });
@@ -295,6 +310,8 @@ app.post('/user/login', (req, res) => {
                     });
                 } else {
                     // (3) 响应
+                    // 服务端响应给客户端cookie
+                    req.session.user = {username,password};
                     res.send({
                         code: 200,
                         msg: '登录成功'
