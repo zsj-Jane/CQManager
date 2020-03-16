@@ -137,8 +137,22 @@ app.post('/hero/update', (req, res) => {
 // 5.4 删除英雄
 app.post('/hero/delete', (req, res) => {
     // (1) 请求
+    let {id} = req.body;
     // (2) 处理
-    // (3) 响应
+    heroModel.delete(`id=${id}`,(err,results)=>{
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        } else {
+            // (3) 响应
+            res.send({
+                code: 200,
+                msg: '删除成功'
+            });
+        }
+    });
 });
 // 5.5 新增英雄
 app.post('/hero/add', (req, res) => {
