@@ -86,6 +86,48 @@
         */
         $('.code').attr('src', `http://127.0.0.1:3000/captcha?t=${Math.random() * 999}`);
       });
+
+      // 2.注册按钮的点击事件
+      $('#register').click(function (e) {
+        // 2.1 阻止表单的默认跳转
+        e.preventDefault();
+        // 2.2 获取表单数据
+        let username = $('#username').val();
+        let code = $('#code').val();
+        // md5加密 md5();
+        // 第一个参数：要加密的明文
+        // 第二个参数：加盐（作用：增加密码的复杂度；特点：同样的明文，盐不同，得到的密文不同）
+        // 细节：尽量不在控制台打印用户的明文和密码
+        // let password = $('#password').val();
+        // let miwen = md5(password,'jane');
+        // 取出表单数据，加密完之后，重新赋值给表单
+        let password = $('#password').val(md5($('#password').val(), 'jane'));
+        // 2.3 ajax发送请求
+        /*
+          FormData:(1)自动获取每个表单的name和value拼接成参数 (2)上传文件
+          $('#form').serialize()：(1)自动获取每个表单的name和value拼接成参数
+        */
+        $.ajax({
+          url: 'http://127.0.0.1:3000/user/register',
+          type: 'post',
+          dataType: 'json',
+          // data: {
+          //   username,
+          //   password,
+          //   code
+          // },
+          data: $('#form').serialize(),
+          success: function (backData) {
+            if (backData.code == 200) {
+              alert('注册成功');
+              // 跳转首页
+              window.location.href = "./login.html";
+            } else {
+              alert(backData.msg);
+            }
+          }
+        });
+      })
     })
   </script>
 </body>
