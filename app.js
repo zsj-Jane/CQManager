@@ -37,47 +37,63 @@ let heroModel = hm.model('heros', {
 // 5.1 查询英雄列表
 app.get('/hero/list', (req, res) => {
     // (1) 请求
-    let {search} = req.query;
+    let { search } = req.query;
     // (2) 处理(查询数据库)
     if (!search) {
         // 如果没有search，查询所有数据
-        heroModel.find((err,results)=>{
+        heroModel.find((err, results) => {
             if (err) {
                 res.send({
-                    code:500,
-                    msg:'服务器错误'
-                }); 
+                    code: 500,
+                    msg: '服务器错误'
+                });
             } else {
+                // (3) 响应
                 res.send({
-                    code:200,
-                    heros:results
+                    code: 200,
+                    heros: results
                 })
             }
         });
     } else {
         // 如果有search，则根据条件查询数据(包含查询)
         // name="剑" ： 名字叫做剑    name like "%剑%" ： 名字包含剑
-        heroModel.find(`name like "%${search}%"`,(err,results)=>{
+        heroModel.find(`name like "%${search}%"`, (err, results) => {
             if (err) {
                 res.send({
-                    code:500,
-                    msg:'服务器错误'
-                }); 
+                    code: 500,
+                    msg: '服务器错误'
+                });
             } else {
+                // (3) 响应
                 res.send({
-                    code:200,
-                    heros:results
+                    code: 200,
+                    heros: results
                 })
             }
         });
     }
-    // (3) 响应
 });
 // 5.2 查询英雄详情
 app.get('/hero/info', (req, res) => {
     // (1) 请求
+    let { id } = req.query;
     // (2) 处理
-    // (3) 响应
+    heroModel.find(`id=${id}`, (err, results) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        } else {
+            // (3) 响应
+            // 注意点：results是一个数组，需要下标取出里面的对象，响应给客户端
+            res.send({
+                code: 200,
+                data: results[0]
+            })
+        }
+    })
 });
 // 5.3 编辑英雄
 app.post('/hero/update', (req, res) => {
