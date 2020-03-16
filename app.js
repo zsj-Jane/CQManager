@@ -12,7 +12,7 @@ app.use(express.static('static'));//英雄图像
 // 4.1 body-parser：解析post参数,给req添加属性body，存储解析好的post参数
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
-// 4.2 express-fileupload：接收文件数据，给req添加属性file，存储解析好的文件
+// 4.2 express-fileupload：接收文件数据，给req添加属性files，存储解析好的文件
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 // 4.3 mysql-ithm数据库操作
@@ -98,8 +98,41 @@ app.get('/hero/info', (req, res) => {
 // 5.3 编辑英雄
 app.post('/hero/update', (req, res) => {
     // (1) 请求
+    // a. 文本数据
+    let { name, skill, id } = req.body;
+    // b. 文件数据
+    let { icon } = req.files;
     // (2) 处理
-    // (3) 响应
+    // a. 文件：写入服务器文件夹static中的images去 `${__dirname}/static/images/${name}.png`
+    icon.mv(`${__dirname}/static/images/${name}.png`, (err) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        }
+    })
+    // b. 文本：存入数据库 icon:`http://127.0.0.1:3000/images/${name}.png`
+    // 注意：托管了static文件夹，可以省略static，服务器会自动识别路径中托管的文件夹下的资源
+    heroModel.update(`id=${id}`, {
+        id,
+        name,
+        skill,
+        icon: `http://127.0.0.1:3000/images/${name}.png`
+    }, (err, results) => {
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '服务器错误'
+            });
+        } else {
+            // (3) 响应
+            res.send({
+                code: 200,
+                msg: '编辑成功'
+            });
+        }
+    });
 });
 // 5.4 删除英雄
 app.post('/hero/delete', (req, res) => {
